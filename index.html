@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoveTales — Every Love Has a Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#120711;
+    --bg-deep:#0b0410;
+    --panel:#1c0d1e;
+    --pink:#ff4d7d;
+    --pink-soft:#ff8fab;
+    --pink-dim:rgba(255,77,125,.35);
+    --gold:#f3c98a;
+    --text:#f5eef1;
+    --text-dim:#cbb8c2;
+    --text-faint:#9c8792;
+    --serif:'Playfair Display', serif;
+    --sans:'Poppins', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-deep);
+    color:var(--text);
+    font-family:var(--sans);
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 48px;
+    background:rgba(10,4,12,.72);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--serif); font-size:1.5rem; font-weight:700; letter-spacing:.3px;
+  }
+  .logo svg{flex-shrink:0;}
+  .logo .tales{color:var(--pink); font-style:italic; font-weight:600;}
+
+  nav.primary-nav{display:flex; align-items:center; gap:38px;}
+  nav.primary-nav > ul{display:flex; align-items:center; gap:38px;}
+  nav.primary-nav a.nav-link{
+    font-size:.92rem; font-weight:500; color:var(--text-dim);
+    position:relative; padding-bottom:4px; transition:color .2s ease;
+    display:flex; align-items:center; gap:6px;
+  }
+  nav.primary-nav a.nav-link:hover, nav.primary-nav a.nav-link.active{color:var(--text);}
+  nav.primary-nav a.nav-link.active::after{
+    content:''; position:absolute; left:0; right:0; bottom:-6px; height:2px;
+    background:linear-gradient(90deg,var(--pink),var(--gold));
+    border-radius:2px;
+  }
+  .chevron{width:11px; height:11px; transition:transform .25s ease;}
+  li.has-dropdown:hover .chevron{transform:rotate(180deg);}
+
+  .btn-auth{
+    background:linear-gradient(120deg,#ff4d7d,#ff2f66);
+    color:#fff; font-weight:600; font-size:.88rem;
+    padding:11px 24px; border-radius:30px;
+    box-shadow:0 8px 22px -8px rgba(255,45,102,.7);
+    transition:transform .2s ease, box-shadow .2s ease;
+    white-space:nowrap;
+  }
+  .btn-auth:hover{transform:translateY(-2px); box-shadow:0 12px 26px -8px rgba(255,45,102,.85);}
+
+  /* ---------- DROPDOWN ---------- */
+  li.has-dropdown{position:relative;}
+  .dropdown{
+    position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%) translateY(-8px);
+    width:230px;
+    background:linear-gradient(160deg,#2a0f24,#1a0715 70%);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    padding:10px;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .22s ease, transform .22s ease;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
+    z-index:50;
+  }
+  li.has-dropdown:hover .dropdown{
+    opacity:1; visibility:visible; pointer-events:auto; transform:translateX(-50%) translateY(0);
+  }
+  .dropdown a{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 12px; border-radius:9px;
+    font-size:.88rem; color:var(--text-dim); font-weight:500;
+    transition:background .18s ease, color .18s ease, padding-left .18s ease;
+  }
+  .dropdown a:hover{background:rgba(255,77,125,.14); color:var(--pink-soft); padding-left:16px;}
+  .dropdown svg{flex-shrink:0; opacity:.85;}
+
+  .favorite-btn{
+    display:flex; align-items:center; gap:8px;
+    background:rgba(243,201,138,.12); border:1px solid rgba(243,201,138,.4);
+    color:var(--gold); font-weight:600; font-size:.85rem;
+    padding:10px 18px; border-radius:24px;
+    transition:background .2s ease, transform .12s ease;
+  }
+  .favorite-btn.saved{ background:linear-gradient(120deg,#f3c98a,#e0a25c); color:#2a1708; }
+  .favorite-btn:active{ transform:scale(.94); }
+
+  .fav-item{
+    display:flex; align-items:center; gap:14px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09);
+    border-radius:14px; padding:14px 16px;
+  }
+  .fav-item .fav-swatch{
+    width:46px; height:46px; border-radius:11px; flex-shrink:0;
+  }
+  .fav-item .fav-info{ flex:1; min-width:0; }
+  .fav-item .fav-info .fav-cat{ font-size:.68rem; color:var(--pink-soft); font-weight:700; letter-spacing:.3px; text-transform:uppercase; }
+  .fav-item .fav-info h5{ font-family:var(--serif); font-size:1rem; color:#fff; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fav-item-actions{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .fav-open-btn{
+    background:rgba(255,77,125,.14); border:1px solid rgba(255,77,125,.35);
+    color:var(--pink-soft); font-size:.78rem; font-weight:600;
+    padding:8px 14px; border-radius:20px;
+  }
+  .fav-remove-btn{
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+    color:var(--text-faint); display:flex; align-items:center; justify-content:center;
+    transition:background .2s ease, color .2s ease;
+  }
+  .fav-remove-btn:hover{ background:rgba(255,90,90,.18); color:#ff8080; }
+  .fav-empty{
+    text-align:center; padding:50px 20px; color:var(--text-faint); font-size:.9rem;
+  }
+  .fav-empty svg{ margin-bottom:14px; opacity:.5; }
+  .modal-lg{ max-width:640px; padding:0; overflow:hidden; }
+  .modal-lg .modal-scroll{ max-height:82vh; overflow-y:auto; padding:0 0 34px; }
+  .modal-lg .modal-scroll::-webkit-scrollbar{width:7px;}
+  .modal-lg .modal-scroll::-webkit-scrollbar-thumb{background:rgba(255,77,125,.35); border-radius:10px;}
+  .modal-lg .modal-close{ z-index:5; background:rgba(6,2,7,.55); }
+
+  .story-cover{
+    height:190px; position:relative;
+    background:linear-gradient(150deg,#3a1b3d,#7a3a2f 55%,#c9713f);
+  }
+  .story-cover .badge{
+    position:absolute; left:24px; bottom:-16px;
+    background:linear-gradient(120deg,#ff4d7d,#ff2f66);
+    color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.4px; text-transform:uppercase;
+    padding:7px 16px; border-radius:20px;
+    box-shadow:0 10px 24px -8px rgba(255,45,102,.7);
+  }
+  .story-body{ padding:36px 34px 0; }
+  .story-body h2{ font-family:var(--serif); font-size:1.55rem; font-weight:600; color:#fff; line-height:1.3; }
+  .story-meta{
+    display:flex; align-items:center; gap:12px; margin-top:14px; margin-bottom:22px;
+    font-size:.8rem; color:var(--text-faint);
+  }
+  .avatar{
+    width:34px; height:34px; border-radius:50%;
+    background:linear-gradient(135deg,#ff4d7d,#f3c98a);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-weight:700; font-size:.82rem; color:#2a0f1f;
+  }
+  .story-meta .who{ color:var(--text); font-weight:600; }
+  .story-meta .dot{ width:3px; height:3px; border-radius:50%; background:var(--text-faint); }
+
+  .importance-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:26px;
+  }
+  .importance-item{
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+    border-radius:12px; padding:12px 10px; text-align:center;
+  }
+  .importance-item .num{ font-family:var(--serif); font-size:1.15rem; font-weight:700; color:var(--pink-soft); }
+  .importance-item .lbl{ font-size:.68rem; color:var(--text-faint); margin-top:2px; letter-spacing:.2px; }
+
+  .story-text p{ font-size:.92rem; line-height:1.85; color:var(--text-dim); margin-bottom:14px; }
+  .story-text p:first-of-type::first-letter{
+    font-family:var(--serif); font-size:2.6rem; font-weight:700; color:var(--pink-soft);
+    float:left; line-height:.8; margin:6px 8px 0 0;
+  }
+
+  .story-actions{ display:flex; align-items:center; gap:14px; margin:26px 0 22px; }
+  .like-btn{
+    display:flex; align-items:center; gap:8px;
+    background:rgba(255,77,125,.12); border:1px solid rgba(255,77,125,.4);
+    color:var(--pink-soft); font-weight:600; font-size:.85rem;
+    padding:10px 18px; border-radius:24px;
+    transition:background .2s ease, transform .12s ease;
+  }
+  .like-btn.liked{ background:linear-gradient(120deg,#ff4d7d,#ff2f66); color:#fff; }
+  .like-btn:active{ transform:scale(.94); }
+  .share-btn{
+    display:flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+    color:var(--text-dim); font-weight:600; font-size:.85rem;
+    padding:10px 18px; border-radius:24px;
+  }
+  .story-note{
+    background:rgba(255,255,255,.03); border:1px dashed rgba(255,77,125,.3);
+    border-radius:14px; padding:16px 18px; margin-bottom:8px;
+  }
+  .story-note h4{ font-size:.8rem; color:var(--pink-soft); margin-bottom:8px; letter-spacing:.3px; text-transform:uppercase; }
+  .story-note ul{ display:flex; flex-direction:column; gap:6px; }
+  .story-note li{ font-size:.82rem; color:var(--text-dim); display:flex; gap:8px; align-items:flex-start; }
+  .story-note li::before{ content:'♥'; color:var(--pink); flex-shrink:0; margin-top:1px; font-size:.72rem; }
+
+  /* Submit story form */
+  .submit-body{ padding:34px 34px 0; }
+  .submit-body h2{ font-family:var(--serif); font-size:1.5rem; font-weight:600; color:#fff; }
+  .submit-body .sub{ font-size:.85rem; color:var(--text-faint); margin:6px 0 26px; }
+  .field-row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  select.lang-select, select.cat-select{
+    appearance:none; -webkit-appearance:none;
+    background:rgba(255,255,255,.05) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="%23cbb8c2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat right 14px center;
+    border:1.5px solid rgba(255,255,255,.1);
+    border-radius:10px;
+    padding:11px 38px 11px 14px;
+    color:var(--text); font-family:var(--sans); font-size:.9rem;
+    outline:none; cursor:pointer;
+    transition:border-color .2s ease, background-color .2s ease;
+  }
+  select.lang-select:focus, select.cat-select:focus{ border-color:var(--pink); }
+  .field-group textarea{
+    background:rgba(255,255,255,.05);
+    border:1.5px solid rgba(255,255,255,.1);
+    border-radius:12px;
+    padding:14px;
+    color:var(--text); font-family:var(--sans); font-size:.9rem; line-height:1.7;
+    outline:none; resize:vertical; min-height:160px;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .field-group textarea:focus{ border-color:var(--pink); background:rgba(255,255,255,.08); }
+  .field-group textarea::placeholder{ color:var(--text-faint); }
+  .char-count{ font-size:.72rem; color:var(--text-faint); text-align:right; margin-top:-8px; }
+  .lang-note{
+    display:flex; align-items:center; gap:8px;
+    font-size:.76rem; color:var(--text-faint);
+    background:rgba(255,77,125,.08); border:1px solid rgba(255,77,125,.25);
+    padding:9px 13px; border-radius:10px; margin-top:2px;
+  }
+
+  /* ---------- AUTH MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(6,2,7,.72);
+    backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    opacity:0; visibility:hidden;
+    transition:opacity .28s ease, visibility .28s ease;
+  }
+  .modal-overlay.open{opacity:1; visibility:visible;}
+  .auth-modal{
+    width:100%; max-width:420px;
+    background:linear-gradient(165deg,#241026,#170a17 65%);
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:22px;
+    padding:36px 34px 32px;
+    position:relative;
+    box-shadow:0 40px 90px -20px rgba(0,0,0,.75);
+    transform:translateY(18px) scale(.97);
+    transition:transform .3s cubic-bezier(.34,1.4,.64,1);
+  }
+  .modal-overlay.open .auth-modal{transform:translateY(0) scale(1);}
+  .modal-close{
+    position:absolute; top:18px; right:18px;
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-dim);
+    transition:background .2s ease, color .2s ease, transform .2s ease;
+  }
+  .modal-close:hover{background:var(--pink); color:#fff; transform:rotate(90deg);}
+  .modal-heart{
+    width:50px; height:50px; border-radius:50%;
+    background:rgba(255,77,125,.14);
+    border:1px solid rgba(255,77,125,.35);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--pink); margin-bottom:18px;
+  }
+  .auth-modal h2{
+    font-family:var(--serif); font-size:1.5rem; font-weight:600; color:#fff; margin-bottom:6px;
+  }
+  .auth-modal .sub{font-size:.85rem; color:var(--text-faint); margin-bottom:24px;}
+  .auth-tabs{
+    display:flex; background:rgba(255,255,255,.05); border-radius:30px; padding:4px; margin-bottom:26px;
+  }
+  .auth-tab{
+    flex:1; text-align:center; padding:9px 0; border-radius:26px;
+    font-size:.85rem; font-weight:600; color:var(--text-faint);
+    transition:background .25s ease, color .25s ease;
+    background:none;
+  }
+  .auth-tab.active{
+    background:linear-gradient(120deg,#ff4d7d,#ff2f66);
+    color:#fff;
+    box-shadow:0 8px 18px -6px rgba(255,45,102,.6);
+  }
+  .auth-form{display:none; flex-direction:column; gap:15px;}
+  .auth-form.active{display:flex;}
+  .field-group{display:flex; flex-direction:column; gap:6px;}
+  .field-group label{font-size:.76rem; color:var(--text-dim); font-weight:500; letter-spacing:.2px;}
+  .field-group input{
+    background:rgba(255,255,255,.05);
+    border:1.5px solid rgba(255,255,255,.1);
+    border-radius:10px;
+    padding:11px 14px;
+    color:var(--text); font-family:var(--sans); font-size:.9rem;
+    outline:none;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .field-group input:focus{border-color:var(--pink); background:rgba(255,255,255,.08);}
+  .field-group input::placeholder{color:var(--text-faint);}
+  .field-row{display:flex; align-items:center; justify-content:space-between; font-size:.78rem; color:var(--text-faint); margin-top:-2px;}
+  .field-row a{color:var(--pink-soft); font-weight:500;}
+  .remember{display:flex; align-items:center; gap:7px;}
+  .remember input{accent-color:var(--pink);}
+  .auth-submit{
+    margin-top:6px;
+    background:linear-gradient(120deg,#ff4d7d,#ff2f66);
+    color:#fff; font-weight:600; font-size:.92rem;
+    padding:13px; border-radius:12px;
+    box-shadow:0 14px 30px -10px rgba(255,45,102,.65);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .auth-submit:hover{transform:translateY(-2px);}
+  .auth-switch{
+    text-align:center; font-size:.82rem; color:var(--text-faint); margin-top:20px;
+  }
+  .auth-switch a{color:var(--pink-soft); font-weight:600;}
+  .form-msg{
+    display:none; align-items:center; gap:8px;
+    background:rgba(120,220,150,.1); border:1px solid rgba(120,220,150,.35);
+    color:#a6e8bb; font-size:.82rem; padding:10px 14px; border-radius:10px; margin-top:14px;
+  }
+  .form-msg.show{display:flex;}
+
+  /* ---------- SEARCH PANEL ---------- */
+  .search-panel{
+    position:sticky; top:0px; z-index:99;
+    max-height:0;
+    overflow:hidden;
+    background:rgba(10,4,12,.98);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+    transition:max-height .38s cubic-bezier(.4,0,.2,1), border-color .38s ease;
+  }
+  .search-panel.open{
+    max-height:140px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .search-panel-inner{
+    max-width:900px; margin:0 auto;
+    padding:26px 6% 30px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .search-field{
+    flex:1;
+    display:flex; align-items:center; gap:12px;
+    background:rgba(255,255,255,.05);
+    border:1.5px solid rgba(255,77,125,.35);
+    border-radius:30px;
+    padding:12px 20px;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .search-field:focus-within{
+    border-color:var(--pink);
+    background:rgba(255,255,255,.08);
+  }
+  .search-field svg{flex-shrink:0; color:var(--pink-soft);}
+  .search-field input{
+    flex:1;
+    background:none; border:none; outline:none;
+    color:var(--text); font-family:var(--sans); font-size:.98rem;
+  }
+  .search-field input::placeholder{color:var(--text-faint);}
+  .search-close{
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-dim);
+    transition:background .2s ease, color .2s ease, transform .2s ease;
+    flex-shrink:0;
+  }
+  .search-close:hover{background:var(--pink); color:#fff; transform:rotate(90deg);}
+  .search-hint{
+    font-size:.76rem; color:var(--text-faint); margin-top:8px; padding-left:4px;
+  }
+  .search-hint span{color:var(--pink-soft); font-weight:500;}
+
+  .cat-card.search-hidden{
+    display:none;
+  }
+  .cat-card.search-match{
+    outline:2px solid var(--pink-soft);
+    outline-offset:2px;
+  }
+  .no-results{
+    grid-column:1 / -1;
+    padding:40px 20px;
+    color:var(--text-faint);
+    font-size:.95rem;
+  }
+  .no-results em{color:var(--pink-soft); font-style:normal; font-weight:600;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:92vh;
+    display:flex; align-items:center;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 70% 30%, rgba(255,90,110,.35), transparent 55%),
+      linear-gradient(180deg, #180a24 0%, #3a1030 35%, #7a2143 62%, #d4552f 85%, #f2934a 100%);
+  }
+  .hero-bg::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900"><circle cx="1080" cy="330" r="150" fill="%23ffd9a0" opacity="0.9"/></svg>');
+    background-repeat:no-repeat; background-position:right 6% top 8%; background-size:420px;
+    filter:blur(1px);
+  }
+  .hero-water{
+    position:absolute; left:0; right:0; bottom:0; height:26%;
+    background:linear-gradient(180deg, rgba(120,40,50,.4), rgba(20,6,14,.95));
+  }
+  .silhouette{
+    position:absolute; right:2%; bottom:0; height:100%;
+    width:min(52%, 720px);
+    display:flex; align-items:flex-end; justify-content:flex-end;
+  }
+  .hearts-float span{
+    position:absolute; color:var(--pink-soft); opacity:.55; font-size:1.1rem;
+    animation:floatUp linear infinite;
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(0) rotate(0deg); opacity:0;}
+    10%{opacity:.6;}
+    90%{opacity:.4;}
+    100%{transform:translateY(-140vh) rotate(20deg); opacity:0;}
+  }
+
+  .hero-inner{
+    position:relative; z-index:5;
+    width:100%;
+    padding:0 6% 0 6%;
+  }
+  .hero-copy{max-width:560px;}
+  .hero-copy h1{
+    font-family:var(--serif);
+    font-size:clamp(2.6rem, 5vw, 4rem);
+    line-height:1.08;
+    font-weight:600;
+    color:#fbf3f5;
+    text-shadow:0 4px 30px rgba(0,0,0,.4);
+  }
+  .hero-copy h1 em{
+    font-style:italic; color:var(--pink);
+    background:linear-gradient(120deg,#ff5f8d,#ffb37a);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-copy p{
+    margin-top:20px; font-size:1.02rem; line-height:1.7; color:rgba(245,238,241,.82);
+    max-width:440px;
+  }
+  .hero-actions{display:flex; align-items:center; gap:28px; margin-top:34px; flex-wrap:wrap;}
+  .btn-primary{
+    background:linear-gradient(120deg,#ff4d7d,#ff2f66);
+    color:#fff; font-weight:600; padding:15px 30px; border-radius:32px;
+    display:inline-flex; align-items:center; gap:10px;
+    box-shadow:0 14px 32px -10px rgba(255,45,102,.75);
+    transition:transform .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-3px);}
+  .btn-ghost{
+    display:inline-flex; align-items:center; gap:12px;
+    color:#fff; font-weight:500; font-size:.95rem;
+  }
+  .play-circle{
+    width:38px; height:38px; border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.7);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s ease;
+  }
+  .btn-ghost:hover .play-circle{background:rgba(255,255,255,.15);}
+
+  /* ---------- CATEGORIES ---------- */
+  .categories{
+    padding:90px 6% 60px;
+    text-align:center;
+    background:var(--bg-deep);
+  }
+  .eyebrow{
+    color:var(--pink); font-style:italic; font-family:var(--serif); font-size:1.05rem;
+    display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px;
+  }
+  .categories h2{
+    font-family:var(--serif); font-weight:600; font-size:clamp(1.8rem,3vw,2.4rem); color:#fff;
+    margin-bottom:50px;
+  }
+  .cat-grid{
+    display:grid;
+    grid-template-columns:repeat(8, 1fr);
+    gap:20px;
+    max-width:1400px; margin:0 auto;
+  }
+  .cat-card{
+    position:relative;
+    border-radius:16px;
+    overflow:hidden;
+    aspect-ratio:3/4.1;
+    cursor:pointer;
+    isolation:isolate;
+    border:1px solid rgba(255,255,255,.06);
+    background:#26121f;
+  }
+  .cat-card .cat-bg{
+    position:absolute; inset:0;
+    filter:saturate(1.05);
+    transform:scale(1.04);
+    transition:transform .5s ease, filter .5s ease;
+  }
+  .cat-card::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(10,3,8,.15) 0%, rgba(8,2,7,.55) 55%, rgba(6,2,5,.92) 100%);
+    z-index:1;
+  }
+  .cat-card:hover .cat-bg{transform:scale(1.12); filter:saturate(1.3) brightness(1.05);}
+  .cat-content{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:18px 14px 20px;
+    text-align:left;
+  }
+  .cat-icon{
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(255,77,125,.18);
+    border:1px solid rgba(255,77,125,.4);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:12px;
+    color:var(--pink-soft);
+    transition:background .25s ease, transform .25s ease;
+  }
+  .cat-card:hover .cat-icon{background:var(--pink); color:#fff; transform:scale(1.08);}
+  .cat-content h3{
+    font-family:var(--serif); font-size:1.08rem; font-weight:600; color:#fff; margin-bottom:5px;
+  }
+  .cat-content p{font-size:.78rem; line-height:1.4; color:var(--text-faint);}
+
+  /* ---------- FEATURES STRIP ---------- */
+  .features{
+    max-width:1300px; margin:70px auto 90px; padding:0 6%;
+  }
+  .features-inner{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    background:linear-gradient(160deg, rgba(255,255,255,.035), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:36px 30px;
+  }
+  .feature{
+    display:flex; align-items:flex-start; gap:16px;
+    padding:6px 18px;
+    border-left:1px solid rgba(255,255,255,.08);
+  }
+  .feature:first-child{border-left:none;}
+  .feature-icon{
+    width:42px; height:42px; border-radius:12px;
+    background:rgba(255,77,125,.12);
+    border:1px solid rgba(255,77,125,.3);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--pink); flex-shrink:0;
+  }
+  .feature h4{font-size:.98rem; font-weight:600; color:#fff; margin-bottom:4px;}
+  .feature p{font-size:.8rem; color:var(--text-faint); line-height:1.5;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    text-align:center; padding:36px 6px 46px; color:var(--text-faint); font-size:.82rem;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  footer .heart-mark{color:var(--pink); margin:0 3px;}
+
+  /* ---------- MOBILE NAV ---------- */
+  .burger{display:none; flex-direction:column; gap:5px; background:none;}
+  .burger span{width:24px; height:2px; background:#fff; border-radius:2px;}
+
+  @media (max-width:1100px){
+    .cat-grid{grid-template-columns:repeat(4,1fr);}
+    .features-inner{grid-template-columns:repeat(2,1fr); gap:24px;}
+    .feature{border-left:none; border-top:1px solid rgba(255,255,255,.08); padding-top:20px;}
+    .feature:nth-child(1),.feature:nth-child(2){border-top:none; padding-top:6px;}
+  }
+  @media (max-width:820px){
+    header{padding:16px 20px;}
+    nav.primary-nav > ul{display:none;}
+    .burger{display:flex;}
+    .btn-auth{padding:9px 16px; font-size:.8rem;}
+    .hero{min-height:auto; padding-top:40px; padding-bottom:60px;}
+    .hero-inner{padding:0 6%;}
+    .silhouette{position:relative; width:100%; height:280px; margin-top:30px; right:0;}
+    .hero-water{display:none;}
+    .categories{padding:60px 6% 40px;}
+    .cat-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:480px){
+    .cat-grid{grid-template-columns:repeat(2,1fr); gap:14px;}
+    .hero-actions{gap:18px;}
+  }
+  :focus-visible{outline:2px solid var(--pink-soft); outline-offset:3px;}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="#ff4d7d" stroke-width="1.6"/>
+    </svg>
+    Love<span class="tales">Tales</span>
+  </a>
+
+  <nav class="primary-nav">
+    <ul>
+      <li><a href="#" class="nav-link active">Home</a></li>
+      <li class="has-dropdown">
+        <a href="#categories" class="nav-link">Stories
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <div class="dropdown" id="storiesDropdown"></div>
+      </li>
+      <li><a href="#" class="nav-link" id="searchNavLink">Search</a></li>
+      <li><a href="#" class="nav-link" id="storyDetailsNavLink">Story Details</a></li>
+      <li><a href="#" class="nav-link">Author Profile</a></li>
+      <li><a href="#" class="nav-link" id="submitStoryNavLink">Submit Story</a></li>
+      <li><a href="#" class="nav-link" id="favoriteNavLink">Favorite
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8"/></svg>
+      </a></li>
+    </ul>
+  </nav>
+
+  <div style="display:flex; align-items:center; gap:16px;">
+    <a href="#" class="btn-auth" id="authTrigger">Login / Register</a>
+    <button class="burger" id="burgerBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="search-panel" id="searchPanel">
+  <div class="search-panel-inner">
+    <div style="flex:1;">
+      <div class="search-field">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search stories — try “heartbreak”, “college”, “marriage”…" autocomplete="off">
+      </div>
+      <div class="search-hint" id="searchHint">Start typing to filter <span>Find Your Kind of Love</span> below, or press Enter to jump there.</div>
+    </div>
+    <button class="search-close" id="searchClose" aria-label="Close search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hearts-float" id="heartsFloat"></div>
+  <div class="silhouette">
+    <svg viewBox="0 0 500 700" width="100%" height="100%" preserveAspectRatio="xMaxYMax meet" xmlns="http://www.w3.org/2000/svg">
+      <!-- her -->
+      <path d="M120 700 C110 560 100 480 130 420 C145 390 150 360 140 330 C132 305 140 275 165 258 C185 244 210 244 228 258 C248 273 252 300 244 325 C236 350 244 375 265 395 C300 425 320 470 315 520 L330 700 Z" fill="#1a0a14"/>
+      <!-- his -->
+      <path d="M260 700 C255 600 245 520 270 470 C282 445 278 415 262 395 C246 375 250 345 275 328 C300 311 335 314 355 335 C375 356 375 388 358 410 C345 427 348 452 368 470 C400 498 415 545 410 600 L420 700 Z" fill="#150610"/>
+      <circle cx="200" cy="235" r="34" fill="#1a0a14"/>
+      <circle cx="315" cy="300" r="30" fill="#150610"/>
+      <path d="M170 210 Q165 150 210 140 Q250 132 260 165 Q270 145 255 190 Q235 175 225 200 Q205 175 170 210Z" fill="#0f0509"/>
+    </svg>
+  </div>
+  <div class="hero-water"></div>
+
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1>Every Love<br>Has a <em>Story</em></h1>
+      <p>Read touching love stories from real people. Share yours and inspire millions.</p>
+      <div class="hero-actions">
+        <a href="#categories" class="btn-primary">Read Stories
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="white" stroke-width="1.8"/></svg>
+        </a>
+        <a href="#" class="btn-ghost">
+          <span class="play-circle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          Share Your Story
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="categories" id="categories">
+  <div class="eyebrow">♡ Explore Categories ♡</div>
+  <h2>Find Your Kind of Love</h2>
+  <div class="cat-grid" id="catGrid"></div>
+</section>
+
+<section class="features">
+  <div class="features-inner" id="featuresGrid"></div>
+</section>
+
+<footer>
+  <p>&copy; <span id="year"></span> LoveTales. Every story matters <span class="heart-mark">♥</span> Made for hopeless romantics.</p>
+</footer>
+
+<div class="modal-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <button class="modal-close" id="modalCloseBtn" aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-heart">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8"/></svg>
+    </div>
+    <h2 id="modalTitle">Welcome back</h2>
+    <p class="sub" id="modalSub">Log in to keep reading and sharing love stories.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Login</button>
+      <button class="auth-tab" data-tab="register">Register</button>
+    </div>
+
+    <form class="auth-form active" id="loginForm">
+      <div class="field-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="field-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+      </div>
+      <div class="field-row">
+        <label class="remember"><input type="checkbox"> Remember me</label>
+        <a href="#">Forgot password?</a>
+      </div>
+      <button type="submit" class="auth-submit">Login</button>
+      <div class="form-msg" id="loginMsg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Logged in successfully. Welcome back!
+      </div>
+    </form>
+
+    <form class="auth-form" id="registerForm">
+      <div class="field-group">
+        <label for="regName">Full name</label>
+        <input type="text" id="regName" placeholder="Jane Doe" required>
+      </div>
+      <div class="field-group">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="field-group">
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" placeholder="Create a password" required>
+      </div>
+      <button type="submit" class="auth-submit">Create account</button>
+      <div class="form-msg" id="registerMsg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Account created. Welcome to LoveTales!
+      </div>
+    </form>
+
+    <p class="auth-switch" id="authSwitchText">
+      New here? <a href="#" id="switchToRegister">Create an account</a>
+    </p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="storyDetailOverlay">
+  <div class="auth-modal modal-lg">
+    <button class="modal-close" id="storyDetailCloseBtn" aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-scroll">
+      <div class="story-cover" id="modalCover">
+        <span class="badge" id="modalBadge">Happy Ending</span>
+      </div>
+      <div class="story-body">
+        <h2 id="modalStoryTitle">The Letter I Almost Didn't Send</h2>
+        <div class="story-meta" id="modalMetaRow">
+          <div class="avatar" id="modalAvatar">JD</div>
+          <span class="who" id="modalWho">Jamie D.</span>
+          <span class="dot"></span>
+          <span id="modalDate">March 2026</span>
+          <span class="dot"></span>
+          <span id="modalRead">6 min read</span>
+        </div>
+
+        <div class="importance-grid" id="modalStatsGrid">
+          <div class="importance-item"><div class="num" id="modalReads">12.4k</div><div class="lbl">READS</div></div>
+          <div class="importance-item"><div class="num" id="modalLikeCount">3,204</div><div class="lbl">LIKES</div></div>
+          <div class="importance-item"><div class="num" id="modalComments">284</div><div class="lbl">COMMENTS</div></div>
+        </div>
+
+        <p class="sub" id="modalIntro" style="display:none;"></p>
+
+        <div class="story-text" id="modalStoryText"></div>
+
+        <div class="story-actions">
+          <button class="like-btn" id="detailLikeBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8"/></svg>
+            <span id="likeBtnLabel">Like</span>
+          </button>
+          <button class="favorite-btn" id="detailFavBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 17.3l-5.4 3.3 1.4-6.1L3 10.2l6.2-.5L12 4l2.8 5.7 6.2.5-4.9 4.3 1.4 6.1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            <span id="favBtnLabel">Add to Favorites</span>
+          </button>
+          <button class="share-btn" id="detailShareBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l1.2-4.4L16 4.8a1.7 1.7 0 012.4 0l0.8.8a1.7 1.7 0 010 2.4L8.4 18.8 4 20z" stroke="currentColor" stroke-width="1.6"/></svg>
+            Share
+          </button>
+        </div>
+
+        <div class="story-note">
+          <h4 id="modalNoteTitle">What makes a story like this work</h4>
+          <ul id="modalNoteList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="favoritesOverlay">
+  <div class="auth-modal modal-lg">
+    <button class="modal-close" id="favoritesCloseBtn" aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-scroll">
+      <div class="submit-body">
+        <h2>Your Favorites</h2>
+        <p class="sub">Stories and guides you've saved, all in one place.</p>
+        <div id="favoritesList" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="submitStoryOverlay">
+  <div class="auth-modal modal-lg">
+    <button class="modal-close" id="submitStoryCloseBtn" aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-scroll">
+      <div class="submit-body">
+        <h2>Share Your Story</h2>
+        <p class="sub">Write in whichever language feels most like you — English, Kinyarwanda, Français, Swahili, العربية, 中文, and more are all welcome.</p>
+
+        <form id="submitStoryForm" style="display:flex; flex-direction:column; gap:16px;">
+          <div class="field-group">
+            <label for="storyTitle">Story title</label>
+            <input type="text" id="storyTitle" placeholder="Give your story a title" required>
+          </div>
+
+          <div class="field-row2">
+            <div class="field-group">
+              <label for="storyCategory">Category</label>
+              <select class="cat-select" id="storyCategory" required></select>
+            </div>
+            <div class="field-group">
+              <label for="storyLanguage">Language</label>
+              <select class="lang-select" id="storyLanguage" required>
+                <option value="">Choose a language</option>
+                <option>English</option>
+                <option>Kinyarwanda</option>
+                <option>Français (French)</option>
+                <option>Kiswahili (Swahili)</option>
+                <option>Español (Spanish)</option>
+                <option>Português (Portuguese)</option>
+                <option>العربية (Arabic)</option>
+                <option>中文 (Chinese)</option>
+                <option>हिन्दी (Hindi)</option>
+                <option>Deutsch (German)</option>
+                <option>Italiano (Italian)</option>
+                <option>日本語 (Japanese)</option>
+                <option>한국어 (Korean)</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="authorName">Your name</label>
+            <input type="text" id="authorName" placeholder="How should we credit you?" required>
+          </div>
+
+          <div class="field-group">
+            <label for="storyContent">Your story</label>
+            <textarea id="storyContent" placeholder="Write freely, in your own words and your own language. There's no wrong way to begin — just start where the story starts for you…" required></textarea>
+          </div>
+          <div class="char-count"><span id="charCount">0</span> characters</div>
+
+          <div class="lang-note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.6"/></svg>
+            Every language carries love differently — write in the one that feels most true.
+          </div>
+
+          <button type="submit" class="auth-submit">Submit Story</button>
+          <div class="form-msg" id="submitStoryMsg">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Thank you — your story has been submitted for review!
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ----- Category data (single source of truth) -----
+  const categories = [
+    {
+      name:"First Love", tag:"The beginning of everything",
+      icon:'<path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+      grad:"linear-gradient(160deg,#3a1b3d,#7a3a2f 60%,#c9713f)"
+    },
+    {
+      name:"Long Distance", tag:"Love knows no distance",
+      icon:'<path d="M3 12l7-7v4h9v6h-9v4z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>',
+      grad:"linear-gradient(160deg,#1c2740,#3a4a63 60%,#8a6b53)"
+    },
+    {
+      name:"Heartbreak", tag:"Stories of pain and healing",
+      icon:'<path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M12 8l-2 4h3l-2 4" stroke="currentColor" stroke-width="1.5" fill="none"/>',
+      grad:"linear-gradient(160deg,#241722,#4a2436 60%,#7c3b3b)"
+    },
+    {
+      name:"Happy Ending", tag:"Love that made it through",
+      icon:'<path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+      grad:"linear-gradient(160deg,#1b2a3a,#345168 60%,#e0a25c)"
+    },
+    {
+      name:"Secret Crush", tag:"The feelings we hide",
+      icon:'<path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="0" /><rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M4 9l8 6 8-6" stroke="currentColor" stroke-width="1.8" fill="none"/>',
+      grad:"linear-gradient(160deg,#2a1c30,#5a2f3e 60%,#c96a4e)"
+    },
+    {
+      name:"Marriage", tag:"A bond that lasts forever",
+      icon:'<circle cx="8" cy="15" r="4.5" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="16" cy="15" r="4.5" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+      grad:"linear-gradient(160deg,#241a2c,#4c3a4f 60%,#8a6b4f)"
+    },
+    {
+      name:"College Love", tag:"Young hearts, big dreams",
+      icon:'<path d="M12 4L2 9l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M6 11.5V17c0 1.5 3 3 6 3s6-1.5 6-3v-5.5" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+      grad:"linear-gradient(160deg,#1e1524,#3a2b3a 60%,#c97a3f)"
+    },
+    {
+      name:"Others", tag:"More stories to explore",
+      icon:'<circle cx="6" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18" cy="12" r="1.6" fill="currentColor"/>',
+      grad:"linear-gradient(160deg,#241d33,#3f3455 60%,#7a5a86)"
+    }
+  ];
+
+  const iconWrap = (svgInner, size=17) =>
+    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">${svgInner}</svg>`;
+
+  // Render nav dropdown
+  const dropdown = document.getElementById('storiesDropdown');
+  dropdown.innerHTML = categories.map(c => `
+    <a href="#categories" data-cat="${c.name}">
+      ${iconWrap(c.icon, 16)}
+      <span>${c.name}</span>
+    </a>
+  `).join('');
+
+  // Render category grid
+  const catGrid = document.getElementById('catGrid');
+  catGrid.innerHTML = categories.map(c => `
+    <div class="cat-card" data-cat="${c.name}" tabindex="0">
+      <div class="cat-bg" style="position:absolute;inset:0;background:${c.grad};"></div>
+      <div class="cat-content">
+        <div class="cat-icon">${iconWrap(c.icon, 17)}</div>
+        <h3>${c.name}</h3>
+        <p>${c.tag}</p>
+      </div>
+    </div>
+  `).join('');
+
+  // Clicking a category card / dropdown item: open its story/guide if we have one,
+  // otherwise scroll to the grid and flash the matching card.
+  document.addEventListener('click', (e)=>{
+    const card = e.target.closest('[data-cat]');
+    if(!card) return;
+    e.preventDefault();
+
+    if(storyLibrary[card.dataset.cat]){
+      openStoryModal(card.dataset.cat);
+      return;
+    }
+
+    document.getElementById('categories').scrollIntoView({behavior:'smooth', block:'start'});
+    document.querySelectorAll('.cat-card').forEach(el=>el.style.outline='none');
+    const match = document.querySelector(`.cat-card[data-cat="${card.dataset.cat}"]`);
+    if(match){
+      match.style.outline = '2px solid var(--pink-soft)';
+      setTimeout(()=> match.style.outline='none', 1200);
+    }
+  });
+
+  // Features strip
+  const features = [
+    { title:"Read Stories", desc:"Thousands of real love stories from around the world.",
+      icon:'<path d="M4 5.5C4 4.7 4.7 4 5.5 4H11a2 2 0 012 2v14a2 2 0 00-2-2H4V5.5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13a2 2 0 00-2 2v14a2 2 0 012-2h7V5.5z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>' },
+    { title:"Share Yours", desc:"Your story can inspire someone today.",
+      icon:'<path d="M4 20l1.2-4.4L16 4.8a1.7 1.7 0 012.4 0l0.8.8a1.7 1.7 0 010 2.4L8.4 18.8 4 20z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>' },
+    { title:"Connect Hearts", desc:"Because every heart has a story.",
+      icon:'<path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.8" fill="none"/>' },
+    { title:"Safe & Private", desc:"Your privacy and story are always protected.",
+      icon:'<path d="M12 3l7 3v6c0 4.6-3 8.4-7 9-4-.6-7-4.4-7-9V6l7-3z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' }
+  ];
+  document.getElementById('featuresGrid').innerHTML = features.map(f => `
+    <div class="feature">
+      <div class="feature-icon">${iconWrap(f.icon, 20)}</div>
+      <div>
+        <h4>${f.title}</h4>
+        <p>${f.desc}</p>
+      </div>
+    </div>
+  `).join('');
+
+  // Floating hearts ambience
+  const heartsContainer = document.getElementById('heartsFloat');
+  const heartGlyphs = ['♥','❤','♡'];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+    s.style.left = Math.random()*100 + '%';
+    s.style.bottom = '-40px';
+    s.style.fontSize = (10 + Math.random()*16) + 'px';
+    s.style.animationDuration = (10 + Math.random()*10) + 's';
+    s.style.animationDelay = (Math.random()*10) + 's';
+    heartsContainer.appendChild(s);
+  }
+
+  // ----- Auth modal -----
+  const authTrigger = document.getElementById('authTrigger');
+  const authOverlay = document.getElementById('authOverlay');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const authTabs = document.querySelectorAll('.auth-tab');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalSub = document.getElementById('modalSub');
+  const authSwitchText = document.getElementById('authSwitchText');
+
+  const tabCopy = {
+    login:{ title:"Welcome back", sub:"Log in to keep reading and sharing love stories.",
+      switchHtml:'New here? <a href="#" id="switchToRegister">Create an account</a>' },
+    register:{ title:"Join LoveTales", sub:"Create an account to share your story with the world.",
+      switchHtml:'Already have an account? <a href="#" id="switchToLogin">Log in</a>' }
+  };
+
+  function openAuthModal(tab='login'){
+    authOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setAuthTab(tab);
+  }
+  function closeAuthModal(){
+    authOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('loginMsg').classList.remove('show');
+    document.getElementById('registerMsg').classList.remove('show');
+  }
+
+  function setAuthTab(tab){
+    authTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    loginForm.classList.toggle('active', tab === 'login');
+    registerForm.classList.toggle('active', tab === 'register');
+    modalTitle.textContent = tabCopy[tab].title;
+    modalSub.textContent = tabCopy[tab].sub;
+    authSwitchText.innerHTML = tabCopy[tab].switchHtml;
+    bindSwitchLink();
+  }
+
+  function bindSwitchLink(){
+    const link = document.getElementById('switchToRegister') || document.getElementById('switchToLogin');
+    if(link){
+      link.addEventListener('click', (e)=>{
+        e.preventDefault();
+        setAuthTab(link.id === 'switchToRegister' ? 'register' : 'login');
+      });
+    }
+  }
+
+  authTrigger.addEventListener('click', (e)=>{
+    e.preventDefault();
+    openAuthModal('login');
+  });
+  modalCloseBtn.addEventListener('click', closeAuthModal);
+  authOverlay.addEventListener('click', (e)=>{
+    if(e.target === authOverlay) closeAuthModal();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && authOverlay.classList.contains('open')) closeAuthModal();
+  });
+  authTabs.forEach(tab=>{
+    tab.addEventListener('click', ()=> setAuthTab(tab.dataset.tab));
+  });
+  bindSwitchLink();
+
+  loginForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    document.getElementById('loginMsg').classList.add('show');
+    setTimeout(closeAuthModal, 1400);
+  });
+  registerForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    document.getElementById('registerMsg').classList.add('show');
+    setTimeout(closeAuthModal, 1400);
+  });
+
+  
+  const storyLibrary = {
+    "default": {
+      type:"story",
+      badge:"Happy Ending",
+      title:"The Letter I Almost Didn't Send",
+      avatar:"JD", who:"Jamie D.", date:"March 2026", read:"6 min read",
+      reads:"12.4k", baseLikes:3204, comments:284,
+      paragraphs:[
+        "I wrote the letter three times and deleted it twice. It was just a handful of honest sentences, but honesty is the hardest thing to send.",
+        "We had known each other for years without ever saying the quiet part out loud. So one evening I sat down, admitted what I felt, and pressed send before I could talk myself out of it again.",
+        "The reply came the next morning: four words, and then a phone call that lasted until sunrise. Two years later, that letter is framed on our kitchen wall — proof that the scariest sentence you write can also be the one that changes everything."
+      ],
+      noteTitle:"What makes a story like this work",
+      noteItems:[
+        "A specific, honest detail — not \u201CI loved them,\u201D but the letter written and rewritten three times.",
+        "A clear turning point where something changes because of a choice someone made.",
+        "An emotional stake the reader can feel — fear, hope, or both at once.",
+        "A resolution or reflection that shows what the moment meant afterward."
+      ]
+    },
+    "First Love": {
+      type:"story",
+      badge:"First Love",
+      title:"Bertrand and Giselle ❤️",
+      avatar:"BG", who:"Shared by a LoveTales reader", date:"Reader favorite", read:"5 min read",
+      reads:"8.9k", baseLikes:2765, comments:198,
+      paragraphs:[
+        "Bertrand yarumuhungu utigirira ikizere cyo kumvako harumukobwa wamukunda bitewe nibyari byari byaramubayeho mbere subwambere yarakunze cg ngo ajye murukundo  nabakobwa ark buruko yabigeragezaga iteka byarangiraga nabi.",
+        "Giselle nawe yarumukobwa witurije ark nanone arumusazi,yisanzura,avuga nakibazo cye kbx, uwo mukobwa yaje guhindura ishuri aza kwiga kukigo bitaga G.S Nyagasambu mumwaka wakabiri wamashiri yisumbuye(S2),yaje kwisanga mwishuri rya sinior two A(S2A) yaje gusangamo inshuti nyinshi harimo nizo bari basanzwe baziranye kuburyo byamworoheye kumentera ark muri iryo shuri yigagamo akaba arinaho wamuhungu 'bertrand' yigaga urumva nibintu byahuranye  .",
+        "Uwo muhungu witwaga 'bertrand' akaba yaricaranaga ninshuti yeee yitwaga 'eric'; nuko umunsi umwe teacher wabo aza kubahindurira imyanya  abicazanya numukobwa witwaga 'Peace NTANKUNDA' ubu asigaye azwi kwizina rya 'Precious' uwo mukobwa    'peace' yarinshuti na 'Giselle' kandi bakunda no kwigana amsomo amwe namwe yabagoraga, nuko bikajya bituma uwo mukobwa witwa giselle aza kureba inshuti ye peace muntebe yee ngo bige.",
+        "Bigatuma bicara kuntebe ari bane kdiii intebe yicaragaho abantu batatu(3) kandi mubyukuri bertrand ni nshuti ye barabyangaga peeeee nuko inshuti yab bertrand eric ikajya ibwira bertrand ngo amwirukane kuko aringe yabaga yega yegereye .nuko nkamwirukana ariko namutima mubi mfite arukugirango nereke inigeer yange ko nari snitchii too, nuko nyn bakagenda rimwe narimwe nkabareke bakiga nakibazo icyo gihe nabaga nabaye serious. ark nyn mn byaragaragaraga ko twangana byadange kuko nadbizi neza ko nawe yanyangaga pee",
+        "Twaje gusoza umwaka wa kabiri twimukira muwa gatatu ark noneho twari twarakuze tutakigira ubwo bugoryi bwose. icyo gihe nanone twisanze twigna ndetse tunicara mugihande kimwe kunebe zegeranye, igihembwe cya gatatu cyagiye kurangira dusigaye twicarana kuntebe imwe. ark mbere yuko twicarana kunebe imwe nari naratangiye kumugirira feelings zidasanzwe ntari narigeze narimwe mugiririra wllh.  ark mbere yuko nangira kumwiyumvamo bidasanzwe byari byatewe na movie yamaze kumbwira  mn byaribirenze ukunu yararimo arambwira movie yurukundo, avuga neza,asekamo,andeba nange mureba,mubaza cyn narambirwe nyn wabonaga aribintu byikoze peee.",
+        "Ibazeko yaje kumbaza impamvu nabaye focused kuri movie arikumbwira kdii we yarumvaga nabirenze, mn nawe ashobora kuba yariyabibonyex cg yariyabiketse ko natngiye kumukunda, byararangiye turataha ariko nkomeza kumutekerezaho icyo gihe byari kuwa kane (4),kuwagatanu tugaruka kwiga ndamusuhuza numva mwishimiye bidasanzwe turicara turiga ark nakubeshye nago nize nez pee kubera icyo kiremwa nartinakunzeee mn natangiye kubona arimwiza cyn kurusha uko yasaga mbere mn ndagenda ndamukunda hahandi numvaga ntaryama cg ngo ngire icyo nkora icyo aricyo cyose namubonye,byageze nimugoroba muri eduide ndamwegera mubaza imyaka afite kuko numvaga anduta nsanga twese turangana ark namurushaga amezi make bertrand (28/02/2009)  giselle (--/--/2009) rero urabonako baribari mukigero kimwe ibyo byatumye numva noneho nsaze wllh. nahise musaba number namubonaho ndamutse mukeneye arazima ndamusezera nuko turataha ",
+        "Kuberako twigaga kwisabato kdii we atazaga kwiga nashatse uburyo muhamagaramo mubaza ibyo turibwige kwisabato(kuwagatandatu) arabimbwira ndangije muganirizaho gake ndamusezera hanyuma ndakupaa.makubeshye numvaga nanyuzwe kdii nanababaye kubera ataribuze kwiga ngo nongere mubone ark narihanganye ndiga ndasoza ndanataha,",
+        "shai twongeye kubonana kuwambere ,nuko rero mwijoro ryo kuwambere nka saa 06:00 mn mvuye nokuvoma wllh naramuhamagaye ark mfite ubwoba mn ndamusuhuza mubaza amakuru yeeee mn twahereye saa 06:00 tuvugana tugeza saa08:00 tukivugana gus nyn byarangiy mubwiye ko mukunda guhera none ndetse niteka ryose. Amen",
+        "mn twaragiye turakundana kuri rwarwego kubera urukundo rwinshi nageragaho nkumva ntarikwizera ko ankunda byukuri cgx ibyo bintu aribyanyabyo. mn nyn byarandyohanye bya dangee ibazeko noneho National Examination yo twayikoze tutazi ngo nibiki turimo  sha peee nakubeshye sinigeze ndeba mwikayi habe nagato kuko umwanya wokwiga wose twawumaraga tuvugana kuri 4ne tukazinduka ngo twige bikatunanira ark byaje kurangira imana idufashije bigenda neza means ko twatsinze tugize namahirwe twiga mukarere kamwe ndetse nibigo byegeranye urumvako twajyanaga kwishuri ndetse nanubu",
+        "gus nyn kuriyinshuro namuhamagaye arambwira ati yanyanze , nyuma yibwo twanyuranyemo byose yahise anyanga kdii mubyukuri naga umuntu umbira ijombo ngo ndakwanga cg ngo nakwanze peee muburu bwokugirango mutandukane ndabyanga bihagije. mn nyn imana imfashe nongere mbone urukundo rwange❤️💕💕 kuko sinabashakubaho namufite Dusoni wange😍"
+
+      ],
+      noteTitle:"Why readers love this one",
+      noteItems:[
+        "First love rarely announces itself — it shows up as small, repeated gestures, like a saved orange.",
+        "Someone has to be brave enough to name what's happening, and it doesn't have to be a big speech.",
+        "The detail that gets kept afterward (the dried orange peel) is what makes the memory feel real.",
+        "Nothing dramatic has to go wrong for a first-love story to be worth telling."
+      ]
+    },
+    "Heartbreak": {
+      type:"story",
+      badge:"Heartbreak",
+      title:"The First Heartbreak (As the Story Goes)",
+      avatar:"♡", who:"LoveTales lore — retold, origin unknown", date:"Passed down, not dated", read:"4 min read",
+      reads:"15.1k", baseLikes:4012, comments:356,
+      paragraphs:[
+        "Storytellers can't agree on who felt it first, only that it must have happened the moment two people realized love could be given and not returned in equal measure. The old telling goes like this: a traveler loved a keeper of a lighthouse, and stayed on the rocks each night waiting for a light that was never lit for them.",
+        "The traveler waited seasons, mistaking distance for shyness and silence for a kind of patience. When the keeper finally spoke, it was gently, and it was still the answer no one wants: 'I kept the light burning for ships, not for you.'",
+        "There was no villain in it — only two truths that didn't match. The traveler left, carrying something no map could chart: the specific ache of loving fully and alone. Every heartbreak story told since, the old tellers say, is just a new coastline for the same old tide."
+      ],
+      noteTitle:"Why this old story still stings",
+      noteItems:[
+        "No one has to be wrong for heartbreak to be real — mismatched feelings are enough.",
+        "The pain sits in a specific image (a light kept burning for someone else), not a vague sadness.",
+        "It names the ache honestly instead of rushing to comfort or fix it.",
+        "It leaves room for the reader's own heartbreak to feel less like the first, and less alone."
+      ]
+    },
+    "Long Distance": {
+      type:"guide",
+      badge:"Long Distance",
+      title:"Long Distance — What Matters Most",
+      intro:"The best long-distance stories aren't really about the miles. They're about what two people choose to do with the gap between them.",
+      noteTitle:"The elements that make it real",
+      noteItems:[
+        "Small, consistent rituals — a goodnight message, a shared playlist — that survive the time difference.",
+        "Honesty about the hard parts: doubt, loneliness, and the fear of growing apart, not just the highlight reel.",
+        "A concrete plan to close the distance eventually, even a rough one — open-ended waiting reads as unresolved.",
+        "Trust built without daily proof, since presence can't be verified the way it can up close.",
+        "A reunion (or a decision not to wait) that feels earned by everything that came before it."
+      ]
+    },
+    "Happy Ending": {
+      type:"guide",
+      badge:"Happy Ending",
+      title:"Happy Ending — What Matters Most",
+      intro:"A happy ending only lands if the reader believes it was earned — not handed to the characters for free.",
+      noteTitle:"The elements that make it earned",
+      noteItems:[
+        "It follows a real struggle — distance, doubt, timing, or fear — that had genuine stakes.",
+        "Both people make an active choice for each other; it isn't fate doing all the work.",
+        "It stays honest about what was imperfect along the way, instead of pretending it was easy.",
+        "A small, specific final image (a kept letter, a returned ring, a shared address) makes it memorable.",
+        "It hints at what comes after, so the ending feels like a beginning rather than a full stop."
+      ]
+    }
+  };
+
+  const storyState = {};
+  Object.keys(storyLibrary).forEach(k => storyState[k] = { liked:false, favorited:false });
+  let activeStoryKey = null;
+  let favorites = [];
+
+  function openModal(overlay){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(overlay){
+    overlay.classList.remove('open');
+    if(!document.querySelector('.modal-overlay.open')) document.body.style.overflow = '';
+  }
+
+  // DOM refs for the shared story/guide modal
+  const storyDetailOverlay = document.getElementById('storyDetailOverlay');
+  const storyDetailCloseBtn = document.getElementById('storyDetailCloseBtn');
+  const modalBadge = document.getElementById('modalBadge');
+  const modalStoryTitle = document.getElementById('modalStoryTitle');
+  const modalMetaRow = document.getElementById('modalMetaRow');
+  const modalAvatar = document.getElementById('modalAvatar');
+  const modalWho = document.getElementById('modalWho');
+  const modalDate = document.getElementById('modalDate');
+  const modalRead = document.getElementById('modalRead');
+  const modalStatsGrid = document.getElementById('modalStatsGrid');
+  const modalReads = document.getElementById('modalReads');
+  const modalLikeCount = document.getElementById('modalLikeCount');
+  const modalComments = document.getElementById('modalComments');
+  const modalIntro = document.getElementById('modalIntro');
+  const modalStoryText = document.getElementById('modalStoryText');
+  const modalNoteTitle = document.getElementById('modalNoteTitle');
+  const modalNoteList = document.getElementById('modalNoteList');
+  const detailLikeBtn = document.getElementById('detailLikeBtn');
+  const likeBtnLabel = document.getElementById('likeBtnLabel');
+  const detailFavBtn = document.getElementById('detailFavBtn');
+  const favBtnLabel = document.getElementById('favBtnLabel');
+  const detailShareBtn = document.getElementById('detailShareBtn');
+
+  function openStoryModal(key){
+    const data = storyLibrary[key];
+    if(!data) return;
+    activeStoryKey = key;
+    const state = storyState[key];
+
+    modalBadge.textContent = data.badge;
+    modalStoryTitle.textContent = data.title;
+
+    if(data.type === "story"){
+      modalMetaRow.style.display = "flex";
+      modalStatsGrid.style.display = "grid";
+      modalIntro.style.display = "none";
+      detailLikeBtn.style.display = "flex";
+      detailShareBtn.style.display = "flex";
+
+      modalAvatar.textContent = data.avatar;
+      modalWho.textContent = data.who;
+      modalDate.textContent = data.date;
+      modalRead.textContent = data.read;
+      modalReads.textContent = data.reads;
+      modalComments.textContent = data.comments.toLocaleString();
+
+      modalStoryText.innerHTML = data.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+      detailLikeBtn.classList.toggle('liked', state.liked);
+      likeBtnLabel.textContent = state.liked ? 'Liked' : 'Like';
+      modalLikeCount.textContent = (data.baseLikes + (state.liked ? 1 : 0)).toLocaleString();
+    } else {
+      modalMetaRow.style.display = "none";
+      modalStatsGrid.style.display = "none";
+      detailLikeBtn.style.display = "none";
+      detailShareBtn.style.display = "none";
+      modalIntro.style.display = "block";
+      modalIntro.textContent = data.intro;
+      modalStoryText.innerHTML = "";
+    }
+
+    modalNoteTitle.textContent = data.noteTitle;
+    modalNoteList.innerHTML = data.noteItems.map(i => `<li>${i}</li>`).join('');
+
+    detailFavBtn.classList.toggle('saved', state.favorited);
+    favBtnLabel.textContent = state.favorited ? 'Saved to Favorites' : 'Add to Favorites';
+
+    openModal(storyDetailOverlay);
+  }
+
+  document.getElementById('storyDetailsNavLink').addEventListener('click', (e)=>{
+    e.preventDefault();
+    openStoryModal('default');
+  });
+  storyDetailCloseBtn.addEventListener('click', ()=> closeModal(storyDetailOverlay));
+  storyDetailOverlay.addEventListener('click', (e)=>{ if(e.target === storyDetailOverlay) closeModal(storyDetailOverlay); });
+
+  detailLikeBtn.addEventListener('click', ()=>{
+    if(!activeStoryKey) return;
+    const state = storyState[activeStoryKey];
+    const data = storyLibrary[activeStoryKey];
+    state.liked = !state.liked;
+    detailLikeBtn.classList.toggle('liked', state.liked);
+    likeBtnLabel.textContent = state.liked ? 'Liked' : 'Like';
+    modalLikeCount.textContent = (data.baseLikes + (state.liked ? 1 : 0)).toLocaleString();
+  });
+
+  detailFavBtn.addEventListener('click', ()=>{
+    if(!activeStoryKey) return;
+    const state = storyState[activeStoryKey];
+    state.favorited = !state.favorited;
+    detailFavBtn.classList.toggle('saved', state.favorited);
+    favBtnLabel.textContent = state.favorited ? 'Saved to Favorites' : 'Add to Favorites';
+
+    if(state.favorited){
+      if(!favorites.includes(activeStoryKey)) favorites.push(activeStoryKey);
+    } else {
+      favorites = favorites.filter(k => k !== activeStoryKey);
+    }
+  });
+
+  // ----- Favorites modal -----
+  const favoriteNavLink = document.getElementById('favoriteNavLink');
+  const favoritesOverlay = document.getElementById('favoritesOverlay');
+  const favoritesCloseBtn = document.getElementById('favoritesCloseBtn');
+  const favoritesList = document.getElementById('favoritesList');
+
+  const catGradients = {};
+  categories.forEach(c => catGradients[c.name] = c.grad);
+
+  function renderFavorites(){
+    if(favorites.length === 0){
+      favoritesList.innerHTML = `
+        <div class="fav-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.6-10-9.3C.3 8.4 2 4.5 5.7 4c2.1-.3 4.1.7 5.3 2.5C12.2 4.7 14.2 3.7 16.3 4c3.7.5 5.4 4.4 3.7 7.7C17.2 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.6"/></svg>
+          <div>You haven't saved anything yet.<br>Open a story and tap <strong>Add to Favorites</strong> to keep it here.</div>
+        </div>`;
+      return;
+    }
+    favoritesList.innerHTML = favorites.map(key=>{
+      const d = storyLibrary[key];
+      const grad = catGradients[d.badge] || "linear-gradient(160deg,#3a1b3d,#7a3a2f)";
+      return `
+        <div class="fav-item">
+          <div class="fav-swatch" style="background:${grad};"></div>
+          <div class="fav-info">
+            <div class="fav-cat">${d.badge}</div>
+            <h5>${d.title}</h5>
+          </div>
+          <div class="fav-item-actions">
+            <button class="fav-open-btn" data-open="${key}">Read</button>
+            <button class="fav-remove-btn" data-remove="${key}" aria-label="Remove">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  favoriteNavLink.addEventListener('click', (e)=>{
+    e.preventDefault();
+    renderFavorites();
+    openModal(favoritesOverlay);
+  });
+  favoritesCloseBtn.addEventListener('click', ()=> closeModal(favoritesOverlay));
+  favoritesOverlay.addEventListener('click', (e)=>{ if(e.target === favoritesOverlay) closeModal(favoritesOverlay); });
+
+  favoritesList.addEventListener('click', (e)=>{
+    const openBtn = e.target.closest('[data-open]');
+    const removeBtn = e.target.closest('[data-remove]');
+    if(openBtn){
+      closeModal(favoritesOverlay);
+      openStoryModal(openBtn.dataset.open);
+    } else if(removeBtn){
+      const key = removeBtn.dataset.remove;
+      favorites = favorites.filter(k => k !== key);
+      storyState[key].favorited = false;
+      renderFavorites();
+    }
+  });
+
+  // ----- Submit Story modal -----
+  const submitStoryNavLink = document.getElementById('submitStoryNavLink');
+  const submitStoryOverlay = document.getElementById('submitStoryOverlay');
+  const submitStoryCloseBtn = document.getElementById('submitStoryCloseBtn');
+  const submitStoryForm = document.getElementById('submitStoryForm');
+  const storyCategorySelect = document.getElementById('storyCategory');
+  const storyContent = document.getElementById('storyContent');
+  const charCount = document.getElementById('charCount');
+
+  // Populate category dropdown from the same categories array used in the grid
+  storyCategorySelect.innerHTML =
+    '<option value="">Choose a category</option>' +
+    categories.map(c => `<option>${c.name}</option>`).join('');
+
+  submitStoryNavLink.addEventListener('click', (e)=>{
+    e.preventDefault();
+    openModal(submitStoryOverlay);
+  });
+  submitStoryCloseBtn.addEventListener('click', ()=> closeModal(submitStoryOverlay));
+  submitStoryOverlay.addEventListener('click', (e)=>{ if(e.target === submitStoryOverlay) closeModal(submitStoryOverlay); });
+
+  storyContent.addEventListener('input', ()=>{
+    charCount.textContent = storyContent.value.length.toLocaleString();
+  });
+
+  submitStoryForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    document.getElementById('submitStoryMsg').classList.add('show');
+    setTimeout(()=>{
+      closeModal(submitStoryOverlay);
+      submitStoryForm.reset();
+      charCount.textContent = '0';
+      document.getElementById('submitStoryMsg').classList.remove('show');
+    }, 1800);
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      if(storyDetailOverlay.classList.contains('open')) closeModal(storyDetailOverlay);
+      if(submitStoryOverlay.classList.contains('open')) closeModal(submitStoryOverlay);
+      if(favoritesOverlay.classList.contains('open')) closeModal(favoritesOverlay);
+    }
+  });
+
+  // ----- Search panel -----
+  const searchNavLink = document.getElementById('searchNavLink');
+  const searchPanel = document.getElementById('searchPanel');
+  const searchInput = document.getElementById('searchInput');
+  const searchClose = document.getElementById('searchClose');
+  const searchHint = document.getElementById('searchHint');
+
+  function openSearch(){
+    searchPanel.classList.add('open');
+    setTimeout(()=> searchInput.focus(), 200);
+  }
+  function closeSearch(){
+    searchPanel.classList.remove('open');
+    searchInput.value = '';
+    filterCategories('');
+  }
+
+  searchNavLink.addEventListener('click', (e)=>{
+    e.preventDefault();
+    if(searchPanel.classList.contains('open')){
+      closeSearch();
+    } else {
+      openSearch();
+    }
+  });
+  searchClose.addEventListener('click', closeSearch);
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && searchPanel.classList.contains('open')) closeSearch();
+  });
+
+  function filterCategories(query){
+    const q = query.trim().toLowerCase();
+    const cards = Array.from(document.querySelectorAll('.cat-card'));
+    let matches = 0;
+
+    cards.forEach(card=>{
+      const name = card.dataset.cat.toLowerCase();
+      const tag = card.querySelector('p').textContent.toLowerCase();
+      const isMatch = q === '' || name.includes(q) || tag.includes(q);
+      card.classList.toggle('search-hidden', !isMatch);
+      card.classList.toggle('search-match', isMatch && q !== '');
+      if(isMatch) matches++;
+    });
+
+    let noResultsEl = document.getElementById('noResultsMsg');
+    if(q !== '' && matches === 0){
+      if(!noResultsEl){
+        noResultsEl = document.createElement('div');
+        noResultsEl.id = 'noResultsMsg';
+        noResultsEl.className = 'no-results';
+        catGrid.appendChild(noResultsEl);
+      }
+      noResultsEl.innerHTML = `No stories found for <em>"${query}"</em>. Try “first love”, “long distance”, or “others”.`;
+    } else if(noResultsEl){
+      noResultsEl.remove();
+    }
+
+    if(q !== ''){
+      searchHint.innerHTML = `<span>${matches}</span> ${matches === 1 ? 'category matches' : 'categories match'} “${query}”.`;
+    } else {
+      searchHint.innerHTML = 'Start typing to filter <span>Find Your Kind of Love</span> below, or press Enter to jump there.';
+    }
+  }
+
+  searchInput.addEventListener('input', (e)=> filterCategories(e.target.value));
+  searchInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      document.getElementById('categories').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+
+  // Mobile burger -> toggles a simple slide list (reuses category+nav links)
+  const burger = document.getElementById('burgerBtn');
+  let mobileOpen = false;
+  burger.addEventListener('click', ()=>{
+    mobileOpen = !mobileOpen;
+    const navUl = document.querySelector('.primary-nav > ul');
+    if(mobileOpen){
+      navUl.style.display='flex';
+      navUl.style.position='fixed';
+      navUl.style.top='64px'; navUl.style.left='0'; navUl.style.right='0';
+      navUl.style.flexDirection='column';
+      navUl.style.background='rgba(10,4,12,.98)';
+      navUl.style.padding='20px 24px';
+      navUl.style.gap='18px';
+      navUl.style.zIndex='99';
+    } else {
+      navUl.style.display='none';
+    }
+  });
+</script>
+</body>
+</html>
